@@ -1,94 +1,141 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Casa Canita · Comp Set Intelligence</title>
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Casa Canita — Competitive Set Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#0f1420;--panel:#171d2b;--p2:#1d2434;--line:#2a3346;--txt:#e7ecf3;--mut:#94a0b4;--gold:#E8B04B}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-.wrap{max-width:1240px;margin:0 auto;padding:24px}
-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--line);padding-bottom:16px}
-h1{margin:0;font-size:22px}h1 b{color:var(--gold)}.sub{color:var(--mut);font-size:12px;margin-top:4px}
-.banner{background:rgba(232,176,75,.07);border:1px solid var(--gold);border-radius:10px;padding:10px 14px;font-size:12px;margin:14px 0;color:#f0d9a8}
-.controls{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin:14px 0}
-.ctl label{display:block;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-select{background:var(--p2);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin:6px 0 18px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.kpi .k{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}.kpi .v{font-size:25px;font-weight:600;margin-top:6px}.kpi .s{font-size:10px;color:var(--mut);margin-top:3px}
-.kpi.gold{border-color:var(--gold)}.kpi.gold .v{color:var(--gold)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
-.card h3{margin:0 0 4px;font-size:14px}.card .note{font-size:11px;color:var(--mut);margin-bottom:10px}
-.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{display:flex;align-items:center;gap:6px;background:var(--p2);border:1px solid var(--line);border-radius:20px;padding:5px 11px;font-size:12px;cursor:pointer;user-select:none}
-.chip .dot{width:10px;height:10px;border-radius:50%}.chip.off{opacity:.35}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:right;padding:9px 10px;border-bottom:1px solid var(--line)}
-th:first-child,td:first-child{text-align:left}thead th{color:var(--mut);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
-tr.ours td{background:rgba(232,176,75,.08)}tr.ours td:first-child{color:var(--gold);font-weight:600}
-.foot{color:var(--mut);font-size:11px;margin-top:14px;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
-canvas{max-height:340px}
-</style></head><body><div class="wrap">
-<header><div><h1><b>Casa Canita</b> · Comp Set Intelligence</h1><div class="sub" id="src"></div></div>
-<div class="sub">Miami Beach · 8 hotels · ADR (Booking+Expedia) &amp; Occupancy</div></header>
-<div class="banner" id="banner"></div>
+:root{--bg:#0e1620;--card:#16212e;--line:#22303c;--txt:#e6ebf0;--mut:#8b97a3;--gold:#d4af37}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px}
+.wrap{max-width:1080px;margin:0 auto;padding:18px}
+h1{font-size:20px;margin:0 0 2px}
+.sb{color:var(--mut);font-size:12px;margin-bottom:14px}
+.banner{background:linear-gradient(90deg,#3a2f12,#23303c);border:1px solid var(--gold);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:13px}
+.banner b{color:var(--gold)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.controls label{color:var(--mut);font-size:12px;margin-right:4px}
+select{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 16px}
+.chip{background:transparent;color:var(--mut);border:1.5px solid var(--line);border-radius:16px;padding:4px 11px;font-size:12px;cursor:pointer;opacity:.5}
+.chip.on{opacity:1;color:var(--txt)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.kpi .lab{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.kpi .val{font-size:22px;font-weight:700;margin-top:4px}
+.kpi .sub{display:block;color:var(--mut);font-size:11px;font-weight:400;margin-top:2px}
+.kpi.gold{border-color:var(--gold)}.kpi.gold .val{color:var(--gold)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.panel h3{margin:0 0 8px;font-size:13px;color:var(--mut);font-weight:600}
+.cbox{height:280px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-size:11px;text-transform:uppercase}
+tr.our td{color:var(--gold);font-weight:600}
+.foot{color:var(--mut);font-size:11px;line-height:1.6;margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}.charts{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+<h1>Casa Canita — Competitive Set Dashboard</h1>
+<div class="sb">Miami Beach · South Beach comp set · generated 2026-05-30</div>
+<div class="banner">Casa Canita <b>run-rate reference</b> (3 mature months, Mar–May 2026): <b>31% occupancy</b> · <b>$290 ADR</b> — rolls forward automatically.</div>
 <div class="controls">
-<div class="ctl"><label>From (week)</label><select id="from"></select></div>
-<div class="ctl"><label>To (week)</label><select id="to"></select></div>
-<div class="ctl" style="flex:1"><label>Hotels</label><div class="chips" id="chips"></div></div></div>
-<div class="kpis" id="kpis"></div>
-<div class="card"><h3>ADR per night · USD</h3><div class="note">Comp set = Booking.com + Expedia blend (solid points = live; dashed = modeled). Casa Canita = realized ADR from PMS.</div><canvas id="adr"></canvas></div>
-<div class="card"><h3>Occupancy · %</h3><div class="note"><b style="color:var(--gold)">Casa Canita = real occupancy (on the books)</b>; comp set = <i>estimated demand</i> from live availability (market signal, not booked occupancy).</div><canvas id="occ"></canvas></div>
-<div class="card"><h3>Selected-range summary</h3><table id="tbl"><thead><tr><th>Hotel</th><th>Rooms</th><th>Avg ADR</th><th>Min</th><th>Max</th><th>Occ %</th><th>vs CC run-rate</th></tr></thead><tbody></tbody></table></div>
-<div class="foot" id="foot"></div></div>
+  <div><label>From</label><select id="fromSel"></select></div>
+  <div><label>To</label><select id="toSel"></select></div>
+  <div class="sb" style="margin:0">Comp ADR coverage: first 12 weeks</div>
+</div>
+<div class="chips" id="chips"></div>
+<div class="kpis">
+  <div class="kpi gold"><div class="lab">Casa Canita ADR</div><div class="val" id="k_ccadr">—</div></div>
+  <div class="kpi gold"><div class="lab">Casa Canita Occupancy</div><div class="val" id="k_ccocc">—</div></div>
+  <div class="kpi"><div class="lab">Comp Set Avg ADR</div><div class="val" id="k_csadr">—</div></div>
+  <div class="kpi"><div class="lab">ADR vs Comp Set</div><div class="val" id="k_delta">—</div></div>
+  <div class="kpi"><div class="lab">Run-rate Reference</div><div class="val" id="k_rr">—</div></div>
+</div>
+<div class="charts">
+  <div class="panel"><h3>ADR ($/night) — Casa Canita solid, comps dashed (modeled)</h3><div class="cbox"><canvas id="adrChart"></canvas></div></div>
+  <div class="panel"><h3>Occupancy (%) — Casa Canita actual, comps estimated</h3><div class="cbox"><canvas id="occChart"></canvas></div></div>
+</div>
+<div class="panel"><h3>Summary (selected week range)</h3>
+<table><thead><tr><th>Hotel</th><th>Avg ADR</th><th>Avg Occ</th><th>ADR vs Casa Canita</th><th>Source</th></tr></thead>
+<tbody id="tbody"></tbody></table></div>
+<div class="foot">
+<b>Methodology.</b> Casa Canita ADR &amp; occupancy are real PMS figures parsed from the pick-up report monthly summary (occupancy = room-nights ÷ 24 rooms × days; ADR = revenue ÷ room-nights), mapped onto forward weeks by month — these reflect bookings on the books (pace), not final occupancy. Comp-set ADR is a Booking.com + Expedia blend sampled on 3 Saturdays and linearly interpolated between (dashed = modeled). Comp-set occupancy is estimated from live availability probes (a market signal, not reported occupancy): sold-out dates = 99%, otherwise occ = 1 − min(10, rooms)/rooms. Run-rate reference = average of the 3 most recent mature months (Mar–May 2026).
+</div>
+</div>
 <script>
-const D={"gen":"2026-05-30","weeks":["2026-06-06","2026-06-13","2026-06-20","2026-06-27","2026-07-04","2026-07-11","2026-07-18","2026-07-25","2026-08-01","2026-08-08","2026-08-15","2026-08-22","2026-08-29","2026-09-05","2026-09-12","2026-09-19","2026-09-26","2026-10-03","2026-10-10","2026-10-17","2026-10-24","2026-10-31","2026-11-07","2026-11-14","2026-11-21","2026-11-28","2026-12-05","2026-12-12","2026-12-19","2026-12-26","2027-01-02","2027-01-09","2027-01-16","2027-01-23","2027-01-30","2027-02-06","2027-02-13","2027-02-20","2027-02-27","2027-03-06","2027-03-13","2027-03-20","2027-03-27","2027-04-03","2027-04-10","2027-04-17","2027-04-24","2027-05-01","2027-05-08","2027-05-15","2027-05-22","2027-05-29"],"hotels":[{"n":"Casa Canita","rooms":24,"ours":true,"c":"#E8B04B","adr":[322.1,322.1,322.1,322.1,411.76,411.76,411.76,411.76,297.42,297.42,297.42,297.42,297.42,279.3,279.3,279.3,279.3,401.44,401.44,401.44,401.44,401.44,383.8,383.8,383.8,383.8,259.44,259.44,259.44,259.44,null,null,null,null,null,null,null,null,null,null,null,null,null,318.1,318.1,318.1,318.1,269.88,269.88,269.88,269.88,269.88],"occ":[11.9,11.9,11.9,11.9,3.8,3.8,3.8,3.8,1.5,1.5,1.5,1.5,1.5,1.0,1.0,1.0,1.0,0.4,0.4,0.4,0.4,0.4,2.2,2.2,2.2,2.2,1.3,1.3,1.3,1.3,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.7,0.7,0.7,0.7,0.5,0.5,0.5,0.5,0.5],"af":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA","of":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"},{"n":"Esme","rooms":145,"ours":false,"c":"#5B8FF9","adr":[183.1,188.11,193.12,198.14,203.15,208.16,213.17,218.19,223.2,229.13,235.05,240.98,246.9,252.83,258.76,264.68,270.61,276.53,282.46,288.39,294.31,300.24,306.16,312.09,318.01,323.94,329.87,335.79,341.72,347.64,353.57,359.5,365.42,371.35,377.27,383.2,370.92,358.64,346.37,334.09,321.81,309.53,297.26,284.98,272.7,260.42,248.15,235.87,223.59,211.31,199.04,186.76],"occ":[35.0,36.5,38.0,39.5,41.0,42.5,44.0,45.5,47.0,48.8,50.6,52.4,54.1,55.9,57.7,59.5,61.2,63.0,64.8,66.6,68.3,70.1,71.9,73.7,75.5,77.2,79.0,80.8,82.6,84.3,86.1,87.9,89.7,91.4,93.2,95.0,91.3,87.6,84.0,80.3,76.6,72.9,69.2,65.5,61.9,58.2,54.5,50.8,47.1,43.5,39.8,36.1],"af":"BMMMMMMMKMMMMMMMMMMMMMMMMMMMMMMMMMMKMMMMMMMMMMMMMMMM","of":"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"},{"n":"Donatella","rooms":6,"ours":false,"c":"#9B6DFF","adr":[339,341.5,344.0,346.5,349.0,351.5,354.0,356.5,359,377.52,396.04,414.56,433.07,451.59,470.11,488.63,507.15,525.67,544.19,562.7,581.22,599.74,618.26,636.78,655.3,673.81,692.33,710.85,729.37,747.89,766.41,784.93,803.44,821.96,840.48,859,826.92,794.85,762.77,730.69,698.62,666.54,634.47,602.39,570.31,538.24,506.16,474.08,442.01,409.93,377.86,345.78],"occ":[35.0,35.3,35.6,35.9,36.2,36.4,36.7,37.0,37.3,39.4,41.6,43.7,45.9,48.0,50.1,52.3,54.4,56.5,58.7,60.8,62.9,65.1,67.2,69.4,71.5,73.6,75.8,77.9,80.0,82.2,84.3,86.5,88.6,90.7,92.9,95.0,91.3,87.6,83.9,80.2,76.5,72.8,69.1,65.4,61.7,58.0,54.3,50.6,46.9,43.2,39.5,35.8],"af":"BMMMMMMMKMMMMMMMMMMMMMMMMMMMMMMMMMMKMMMMMMMMMMMMMMMM","of":"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"},{"n":"The Betsy","rooms":130,"ours":false,"c":"#F6685E","adr":[363.5,370.69,377.88,385.06,392.25,399.44,406.62,413.81,421,446.74,472.48,498.22,523.96,549.7,575.44,601.19,626.93,652.67,678.41,704.15,729.89,755.63,781.37,807.11,832.85,858.59,884.33,910.07,935.81,961.56,987.3,1013.04,1038.78,1064.52,1090.26,1116,1069.42,1022.85,976.27,929.69,883.12,836.54,789.96,743.38,696.81,650.23,603.65,557.08,510.5,463.92,417.35,370.77],"occ":[35.0,35.6,36.1,36.7,37.3,37.9,38.4,39.0,39.6,41.6,43.7,45.7,47.8,49.8,51.9,54.0,56.0,58.1,60.1,62.2,64.2,66.3,68.3,70.4,72.4,74.5,76.5,78.6,80.6,82.7,84.7,86.8,88.8,90.9,92.9,95.0,91.3,87.6,83.9,80.1,76.4,72.7,69.0,65.3,61.6,57.9,54.1,50.4,46.7,43.0,39.3,35.6],"af":"BMMMMMMMKMMMMMMMMMMMMMMMMMMMMMMMMMMKMMMMMMMMMMMMMMMM","of":"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"},{"n":"Essex House","rooms":70,"ours":false,"c":"#61C0BF","adr":[187.0,194.25,201.5,208.75,216.0,223.25,230.5,237.75,245,248.7,252.41,256.11,259.81,263.52,267.22,270.93,274.63,278.33,282.04,285.74,289.44,293.15,296.85,300.56,304.26,307.96,311.67,315.37,319.07,322.78,326.48,330.19,333.89,337.59,341.3,345,335.36,325.72,316.08,306.44,296.79,287.15,277.51,267.87,258.23,248.59,238.95,229.31,219.66,210.02,200.38,190.74],"occ":[35.0,37.8,40.5,43.3,46.0,48.8,51.5,54.3,57.0,58.4,59.8,61.2,62.6,64.1,65.5,66.9,68.3,69.7,71.1,72.5,73.9,75.3,76.7,78.1,79.5,80.9,82.3,83.7,85.2,86.6,88.0,89.4,90.8,92.2,93.6,95.0,91.3,87.7,84.0,80.4,76.7,73.0,69.4,65.7,62.0,58.4,54.7,51.1,47.4,43.7,40.1,36.4],"af":"BMMMMMMMKMMMMMMMMMMMMMMMMMMMMMMMMMMKMMMMMMMMMMMMMMMM","of":"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"},{"n":"Casa Faena","rooms":38,"ours":false,"c":"#F2A65A","adr":[205.86,209.0,212.15,215.29,218.44,221.58,224.72,227.87,231.01,242.0,252.98,263.97,274.96,285.94,296.93,307.92,318.9,329.89,340.88,351.86,362.85,373.84,384.82,395.81,406.8,417.78,428.77,439.76,450.74,461.73,472.72,483.7,494.69,505.68,516.66,527.65,507.8,487.94,468.09,448.23,428.38,408.52,388.67,368.81,348.96,329.11,309.25,289.4,269.54,249.69,229.83,209.98],"occ":[35.0,35.6,36.2,36.8,37.3,37.9,38.5,39.1,39.7,41.7,43.8,45.8,47.9,49.9,52.0,54.0,56.1,58.1,60.2,62.2,64.3,66.3,68.4,70.4,72.5,74.5,76.6,78.6,80.7,82.7,84.8,86.8,88.9,90.9,93.0,95.0,91.3,87.6,83.9,80.2,76.5,72.8,69.1,65.4,61.7,58.0,54.3,50.6,46.9,43.2,39.5,35.8],"af":"BMMMMMMMKMMMMMMMMMMMMMMMMMMMMMMMMMMKMMMMMMMMMMMMMMMM","of":"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"},{"n":"Hotel Victor","rooms":91,"ours":false,"c":"#7FB069","adr":[303.5,299.81,296.12,292.44,288.75,285.06,281.38,277.69,274,287.04,300.07,313.11,326.15,339.19,352.22,365.26,378.3,391.33,404.37,417.41,430.44,443.48,456.52,469.56,482.59,495.63,508.67,521.7,534.74,547.78,560.81,573.85,586.89,599.93,612.96,626,606.22,586.45,566.67,546.89,527.12,507.34,487.56,467.78,448.01,428.23,408.45,388.68,368.9,349.12,329.35,309.57],"occ":[40.0,39.4,38.8,38.1,37.5,36.9,36.3,35.6,35.0,37.2,39.4,41.7,43.9,46.1,48.3,50.6,52.8,55.0,57.2,59.4,61.7,63.9,66.1,68.3,70.6,72.8,75.0,77.2,79.4,81.7,83.9,86.1,88.3,90.6,92.8,95.0,91.6,88.3,84.9,81.5,78.1,74.8,71.4,68.0,64.7,61.3,57.9,54.5,51.2,47.8,44.4,41.1],"af":"BMMMMMMMKMMMMMMMMMMMMMMMMMMMMMMMMMMKMMMMMMMMMMMMMMMM","of":"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"},{"n":"The Local House","rooms":18,"ours":false,"c":"#D88C9A","adr":[542.5,520.19,497.88,475.56,453.25,430.94,408.62,386.31,364,369.07,374.15,379.22,384.3,389.37,394.44,399.52,404.59,409.67,414.74,419.81,424.89,429.96,435.04,440.11,445.19,450.26,455.33,460.41,465.48,470.56,475.63,480.7,485.78,490.85,495.93,501,504.27,507.54,510.82,514.09,517.36,520.63,523.9,527.17,530.45,533.72,536.99,540.26,543.53,546.81,550.08,553.35],"occ":[91.6,84.5,77.4,70.4,63.3,56.2,49.1,42.1,35.0,36.6,38.2,39.8,41.4,43.0,44.6,46.3,47.9,49.5,51.1,52.7,54.3,55.9,57.5,59.1,60.7,62.3,63.9,65.5,67.2,68.8,70.4,72.0,73.6,75.2,76.8,78.4,79.4,80.5,81.5,82.6,83.6,84.6,85.7,86.7,87.7,88.8,89.8,90.9,91.9,92.9,94.0,95.0],"af":"BMMMMMMMKMMMMMMMMMMMMMMMMMMMMMMMMMMKMMMMMMMMMMMMMMMM","of":"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"}],"cc":{"occ":31.2,"adr":288.51,"lbl":"Mar\u2013May 2026 realized"},"src":"Casa Canita: real data from Guesty master (Drive). Comp set ADR: Booking.com + Expedia blend (W1) / Booking anchors W9,W36, other weeks modeled. Comp set occupancy: estimated from live availability (modeled until daily sweep)."};
-const W=D.weeks.length;
-const f$=v=>v==null?'—':'$'+Math.round(v).toLocaleString('en-US');
-const dl=s=>{const x=new Date(s+'T00:00');return x.toLocaleDateString('en',{day:'2-digit',month:'short'})+" '"+String(x.getFullYear()).slice(2)};
-let fromW=1,toW=W;const on={};D.hotels.forEach(h=>on[h.n]=true);
-const ours=D.hotels.find(h=>h.ours);
-const fS=document.getElementById('from'),tS=document.getElementById('to');
-D.weeks.forEach((s,i)=>{const o=document.createElement('option');o.value=i+1;o.textContent='W'+(i+1)+' · '+dl(s);fS.appendChild(o.cloneNode(true));tS.appendChild(o)});
-fS.value=1;tS.value=W;
-document.getElementById('src').textContent='Generated '+D.gen+' · Booking.com + Expedia + Guesty (Casa Canita)';
-document.getElementById('banner').innerHTML='★ <b>Casa Canita run-rate (realized '+D.cc.lbl+'):</b> '+D.cc.occ+'% occupancy at '+f$(D.cc.adr)+' ADR. Forward weeks show on-the-books pace.';
-const chips=document.getElementById('chips');
-D.hotels.forEach(h=>{const c=document.createElement('div');c.className='chip';c.innerHTML='<span class="dot" style="background:'+h.c+'"></span>'+h.n+(h.ours?' ★':'');c.onclick=()=>{on[h.n]=!on[h.n];c.classList.toggle('off',!on[h.n]);R()};chips.appendChild(c)});
-fS.onchange=()=>{fromW=+fS.value;if(toW<fromW){toW=fromW;tS.value=fromW}R()};
-tS.onchange=()=>{toW=+tS.value;if(fromW>toW){fromW=toW;fS.value=toW}R()};
-const idx=()=>{const a=[];for(let w=fromW;w<=toW;w++)a.push(w-1);return a};
-const av=a=>{a=a.filter(x=>x!=null);return a.length?a.reduce((x,y)=>x+y,0)/a.length:0};
-let cA,cO;
-function R(){
- const ix=idx();const labels=ix.map(i=>dl(D.weeks[i]));
- const shown=D.hotels.filter(h=>on[h.n]);
- const mk=(metric,flagKey,liveSet)=>shown.map(h=>{const fl=h[flagKey];const data=ix.map(i=>h[metric][i]);
-   return{label:h.n,data,borderColor:h.c,backgroundColor:h.c,borderWidth:h.ours?3.5:1.8,spanGaps:true,tension:.35,
-    pointRadius:ix.map(i=>liveSet.includes(fl[i])?3.2:0),
-    segment:{borderDash:ctx=>{const i=ix[ctx.p1DataIndex];return fl[i]==='M'?[5,4]:undefined}}}});
- const opt=yt=>({responsive:true,interaction:{mode:'index',intersect:false},
-  plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':(yt==='$'?f$(c.parsed.y):c.parsed.y.toFixed(0)+'%'))}}},
-  scales:{x:{ticks:{color:'#94a0b4',maxRotation:0,autoSkip:true,maxTicksLimit:13},grid:{color:'#1d2434'}},
-   y:{ticks:{color:'#94a0b4',callback:v=>yt==='$'?f$(v):v+'%'},grid:{color:'#1d2434'},suggestedMin:yt==='%'?0:undefined,suggestedMax:yt==='%'?100:undefined}}});
- if(cA)cA.destroy();if(cO)cO.destroy();
- cA=new Chart(document.getElementById('adr'),{type:'line',data:{labels,datasets:mk('adr','af','ABK')},options:opt('$')});
- cO=new Chart(document.getElementById('occ'),{type:'line',data:{labels,datasets:mk('occ','of','AS')},options:opt('%')});
- const ccA=av(ix.map(i=>ours.adr[i])),ccO=av(ix.map(i=>ours.occ[i]));
- const ccHas=ix.some(i=>ours.adr[i]!=null);
- const compA=av(D.hotels.filter(h=>!h.ours).flatMap(h=>ix.map(i=>h.adr[i])));
- const ccRank=ccA>0?ccA:D.cc.adr;
- const arr=D.hotels.filter(h=>!h.ours).map(h=>av(ix.map(i=>h.adr[i]))).concat([ccRank]).sort((a,b)=>b-a);
- const rank=arr.indexOf(ccRank)+1;const diff=ccRank-compA,dp=compA?diff/compA*100:0;
- document.getElementById('kpis').innerHTML=
-  K('Casa Canita · ADR',ccHas?f$(ccA):'—',ccHas?'selected range (realized)':'no bookings in range',1)+
-  K('Casa Canita · Occupancy',ccO.toFixed(1)+'%','selected range (on the books)',1)+
-  K('Comp set · Avg ADR',f$(compA),'selected range')+
-  K('ADR vs comp set',(diff>=0?'+':'')+f$(diff),(dp>=0?'+':'')+dp.toFixed(0)+'% · rank '+rank+'/'+D.hotels.length)+
-  K('Casa Canita · run-rate',D.cc.occ+'% @ '+f$(D.cc.adr),D.cc.lbl);
- const tb=document.querySelector('#tbl tbody');tb.innerHTML='';
- D.hotels.map(h=>{const a=ix.map(i=>h.adr[i]).filter(x=>x!=null);
-   return{h,avg:av(a),min:a.length?Math.min(...a):null,max:a.length?Math.max(...a):null,occ:av(ix.map(i=>h.occ[i]))}})
-  .sort((x,y)=>y.avg-x.avg).forEach(o=>{const vs=o.avg-D.cc.adr;const tr=document.createElement('tr');if(o.h.ours)tr.className='ours';
-   tr.innerHTML='<td><span class="dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+o.h.c+';margin-right:7px"></span>'+o.h.n+(o.h.ours?' ★':'')+'</td><td>'+o.h.rooms+'</td><td>'+f$(o.avg)+'</td><td>'+f$(o.min)+'</td><td>'+f$(o.max)+'</td><td>'+o.occ.toFixed(0)+'%</td><td>'+(o.h.ours?'—':((vs>=0?'+':'')+f$(vs)))+'</td>';tb.appendChild(tr)});
+const D={"gen":"2026-05-30","weeks":["2026-06-06","2026-06-13","2026-06-20","2026-06-27","2026-07-04","2026-07-11","2026-07-18","2026-07-25","2026-08-01","2026-08-08","2026-08-15","2026-08-22","2026-08-29","2026-09-05","2026-09-12","2026-09-19","2026-09-26","2026-10-03","2026-10-10","2026-10-17","2026-10-24","2026-10-31","2026-11-07","2026-11-14","2026-11-21","2026-11-28","2026-12-05","2026-12-12","2026-12-19","2026-12-26","2027-01-02","2027-01-09","2027-01-16","2027-01-23","2027-01-30","2027-02-06","2027-02-13","2027-02-20","2027-02-27","2027-03-06","2027-03-13","2027-03-20","2027-03-27","2027-04-03","2027-04-10","2027-04-17","2027-04-24","2027-05-01","2027-05-08","2027-05-15","2027-05-22","2027-05-29"],"rr":{"occ":31,"adr":290},"cc":{"n":"Casa Canita","adr":[322,322,322,322,412,412,412,412,297,297,297,297,297,279,279,279,279,401,401,401,401,401,384,384,384,384,259,259,259,259,null,null,null,null,null,null,null,null,null,null,null,null,null,318,318,318,318,270,270,270,270,270],"occ":[12,12,12,12,4,4,4,4,1,1,1,1,1,1,1,1,1,0,0,0,0,0,2,2,2,2,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1],"af":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-------------AAAAAAAAA","of":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-------------AAAAAAAAA"},"comps":[{"n":"Esme","t":145,"adr":[163,218,273,329,384,439,406,372,339,306,272,239,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[93,93,93,93,93,93,93,93,93,93,93,93,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":"BMMMMKMMMMMK----------------------------------------","of":"MMMMMMMMMMMM----------------------------------------"},{"n":"Donatella","t":6,"adr":[339,341,343,345,347,349,351,352,354,356,357,359,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[0,20,40,59,79,99,83,66,50,33,17,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":"KMMMMMMMMMMK----------------------------------------","of":"MMMMMSMMMMMM----------------------------------------"},{"n":"The Betsy","t":130,"adr":[448,557,666,775,884,993,887,780,674,567,461,354,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[92,92,92,92,92,92,92,92,92,92,92,92,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":"KMMMMBMMMMMB----------------------------------------","of":"MMMMMMMMMMMM----------------------------------------"},{"n":"Essex House","t":70,"adr":[205,208,211,214,217,220,223,225,228,230,233,235,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[86,89,91,94,96,99,97,95,93,90,88,86,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":"KMMMMMMMMMMK----------------------------------------","of":"MMMMMSMMMMMM----------------------------------------"},{"n":"Casa Faena","t":38,"adr":[223,234,245,257,268,279,271,263,255,247,239,231,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[74,74,74,74,74,74,74,74,74,74,74,74,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":"KMMMMBMMMMMK----------------------------------------","of":"MMMMMMMMMMMM----------------------------------------"},{"n":"Hotel Victor","t":91,"adr":[321,322,324,325,327,328,329,330,331,332,333,334,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[89,91,93,95,97,99,97,96,94,92,91,89,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":"KMMMMMMMMMMK----------------------------------------","of":"MMMMMSMMMMMM----------------------------------------"},{"n":"The Local House","t":18,"adr":[409,459,509,559,609,659,599,538,478,418,357,297,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[44,44,44,44,44,44,44,44,44,44,44,44,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":"KMMMMKMMMMMK----------------------------------------","of":"MMMMMMMMMMMM----------------------------------------"}],"compWeeks":12};
+const COLORS=['#5dade2','#48c9b0','#f5b041','#bb8fce','#ec7063','#52be80','#aeb6bf'];
+const fmtW=iso=>{const d=new Date(iso+'T00:00:00Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});};
+let st={from:0,to:D.compWeeks-1,vis:D.comps.map(()=>true)};
+let adrChart,occChart;
+
+function buildControls(){
+  const fs=document.getElementById('fromSel'),ts=document.getElementById('toSel');
+  D.weeks.forEach((w,i)=>{const o1=document.createElement('option');o1.value=i;o1.textContent=fmtW(w);fs.appendChild(o1);
+    const o2=document.createElement('option');o2.value=i;o2.textContent=fmtW(w);ts.appendChild(o2);});
+  fs.value=st.from;ts.value=st.to;
+  fs.onchange=()=>{st.from=Math.min(+fs.value,st.to);fs.value=st.from;render();};
+  ts.onchange=()=>{st.to=Math.max(+ts.value,st.from);ts.value=st.to;render();};
+  const chips=document.getElementById('chips');
+  D.comps.forEach((c,i)=>{const b=document.createElement('button');b.className='chip on';b.textContent=c.n;
+    b.style.borderColor=COLORS[i];b.onclick=()=>{st.vis[i]=!st.vis[i];b.classList.toggle('on',st.vis[i]);render();};
+    chips.appendChild(b);});
 }
-const K=(k,v,s,g)=>'<div class="kpi'+(g?' gold':'')+'"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="s">'+(s||'')+'</div></div>';
-document.getElementById('foot').innerHTML='<b>Methodology.</b> Casa Canita ADR &amp; occupancy are REAL from its PMS (Guesty): occupancy = room nights ÷ (24 × nights), ADR = net revenue ÷ room nights; forward weeks = on-the-books pace, run-rate uses realized '+D.cc.lbl+'. Comp set ADR = Booking.com + Expedia blend at live anchors (dashed = modeled between, filled by daily refresh). Comp set occupancy = estimated from live availability (market-demand signal, not booked occupancy). · '+D.src;
-R();
-</script></body></html>
+const rng=()=>{const a=[];for(let i=st.from;i<=st.to;i++)a.push(i);return a;};
+function mean(arr){const v=arr.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((s,x)=>s+x,0)/v.length:null;};
+function ccAdrAvg(){return mean(rng().map(i=>D.cc.af[i]!=='-'?D.cc.adr[i]:null));}
+function ccOccAvg(){return mean(rng().map(i=>D.cc.of[i]==='A'?D.cc.occ[i]:null));}
+function compAdrAvg(ci){return mean(rng().map(i=>D.comps[ci].adr[i]));}
+function compOccAvg(ci){return mean(rng().map(i=>D.comps[ci].occ[i]));}
+function compSetAdr(){const v=D.comps.map((c,i)=>st.vis[i]?compAdrAvg(i):null).filter(x=>x!=null);return v.length?v.reduce((s,x)=>s+x,0)/v.length:null;}
+
+function setKpi(id,val,sub){document.getElementById(id).innerHTML=val+(sub?'<span class="sub">'+sub+'</span>':'');}
+function money(x){return x==null?'—':'$'+Math.round(x);}
+function pct(x){return x==null?'—':Math.round(x)+'%';}
+
+function render(){
+  const ca=ccAdrAvg(),co=ccOccAvg(),cs=compSetAdr();
+  setKpi('k_ccadr',money(ca),'selected weeks');
+  setKpi('k_ccocc',pct(co),'on the books');
+  setKpi('k_csadr',money(cs),'visible comps');
+  let deltaTxt='—',rankTxt='';
+  if(ca!=null&&cs!=null){const d=ca-cs;deltaTxt=(d>=0?'+':'')+'$'+Math.round(d);}
+  const list=[{n:'Casa Canita',v:ca,our:true}];
+  D.comps.forEach((c,i)=>{if(st.vis[i]){const v=compAdrAvg(i);if(v!=null)list.push({n:c.n,v});}});
+  list.sort((a,b)=>b.v-a.v);
+  const rank=list.findIndex(x=>x.our)+1;
+  if(ca!=null)rankTxt='rank '+rank+' of '+list.length;
+  setKpi('k_delta',deltaTxt,rankTxt);
+  setKpi('k_rr',pct(D.rr.occ)+' · '+money(D.rr.adr),'Mar–May 2026');
+  drawCharts();drawTable();
+}
+
+function dataset(label,arr,color,solid){return{label,data:arr,borderColor:color,backgroundColor:color,
+  borderWidth:solid?3:2,borderDash:solid?[]:[6,4],pointRadius:2,pointHoverRadius:4,spanGaps:true,tension:.25};}
+
+function drawCharts(){
+  const idx=rng();const labels=idx.map(i=>fmtW(D.weeks[i]));
+  const mk=(key)=>{const ds=[dataset('Casa Canita',idx.map(i=>D.cc[key][i]),'#d4af37',true)];
+    D.comps.forEach((c,i)=>{if(st.vis[i])ds.push(dataset(c.n,idx.map(j=>c[key][j]),COLORS[i],false));});return ds;};
+  const opt=(unit)=>({responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{color:'#cfd6dd',boxWidth:14,font:{size:11}}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'n/a':(unit==='$'?'$'+c.parsed.y:c.parsed.y+'%'))}}},
+    scales:{x:{ticks:{color:'#8b97a3',maxRotation:0,autoSkip:true,font:{size:10}},grid:{color:'#22303c'}},
+      y:{ticks:{color:'#8b97a3',callback:v=>unit==='$'?'$'+v:v+'%'},grid:{color:'#22303c'}}}});
+  if(adrChart)adrChart.destroy();if(occChart)occChart.destroy();
+  adrChart=new Chart(document.getElementById('adrChart'),{type:'line',data:{labels,datasets:mk('adr')},options:opt('$')});
+  occChart=new Chart(document.getElementById('occChart'),{type:'line',data:{labels,datasets:mk('occ')},options:opt('%')});
+}
+
+function drawTable(){
+  const ca=ccAdrAvg();
+  let rows='<tr class="our"><td>Casa Canita ★</td><td>'+money(ca)+'</td><td>'+pct(ccOccAvg())+'</td><td>—</td><td>Real PMS</td></tr>';
+  D.comps.forEach((c,i)=>{if(!st.vis[i])return;const a=compAdrAvg(i),o=compOccAvg(i);
+    let vs='—';if(ca!=null&&a!=null){const d=ca-a;vs=(d>=0?'+':'')+'$'+Math.round(d);}
+    const so=rng().some(j=>c.of[j]==='S')?' · sold-out wk':'';
+    rows+='<tr><td>'+c.n+'</td><td>'+money(a)+'</td><td>'+pct(o)+'</td><td>'+vs+'</td><td>Blend/est'+so+'</td></tr>';});
+  document.getElementById('tbody').innerHTML=rows;
+}
+buildControls();render();
+</script>
+</body></html>
