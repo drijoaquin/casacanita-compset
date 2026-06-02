@@ -1,108 +1,147 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Casa Canita — Comp Set Dashboard</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Canita — Competitive Set ADR Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#0e1117;--card:#161b22;--bd:#272e3a;--tx:#e6edf3;--mut:#8b949e;--gold:#d4af37;--gold2:#f0d77a;--blue:#58a6ff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-.wrap{max-width:1080px;margin:0 auto;padding:18px}
-h1{font-size:21px;margin:0 0 2px}.sub{color:var(--mut);font-size:13px;margin-bottom:14px}
-.banner{background:linear-gradient(90deg,#3a2f0c,#1d1808);border:1px solid var(--gold);border-radius:10px;padding:11px 15px;margin-bottom:16px;color:var(--gold2);font-size:14px}
-.banner b{color:var(--gold)}
-.ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:16px}
-.ctrl label{color:var(--mut);font-size:12px;margin-right:5px}
-select{background:#0e1117;color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:5px 8px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
-.chip{border:1px solid var(--bd);background:var(--card);color:var(--mut);border-radius:16px;padding:4px 11px;font-size:12px;cursor:pointer;user-select:none}
-.chip.on{color:#fff}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:18px}
-.kpi{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:13px}
-.kpi .l{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
-.kpi .v{font-size:23px;font-weight:700;margin-top:3px}
-.kpi .d{font-size:12px;margin-top:2px;color:var(--mut)}
-.gold .v{color:var(--gold)}
-.chart{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:16px}
-.chart h3{margin:0 0 8px;font-size:14px;font-weight:600}
+:root{--bg:#0d1117;--panel:#161b22;--panel2:#1c2430;--line:#2b3442;--txt:#e6edf3;--mut:#8b949e;--gold:#e8b84b;--green:#2ea043;--red:#da3633;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:20px;line-height:1.45}
+h1{font-size:21px;font-weight:700}
+h1 .g{color:var(--gold)}
+.sub{color:var(--mut);font-size:13px;margin-top:3px}
+.bar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:16px 0;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.bar label{font-size:12px;color:var(--mut);margin-right:5px}
+select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.chip{font-size:12px;padding:5px 11px;border-radius:20px;border:1px solid var(--line);background:var(--panel2);color:var(--mut);cursor:pointer;user-select:none}
+.chip.on{color:#0d1117;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:16px 0}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.kpi .l{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+.kpi .v{font-size:25px;font-weight:700;margin-top:6px}
+.kpi .s{font-size:12px;color:var(--mut);margin-top:3px}
+.kpi.gold{border-color:var(--gold)}
+.kpi.gold .v{color:var(--gold)}
+.pos{color:var(--green)}.neg{color:var(--red)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:16px 0}
+.card h2{font-size:15px;font-weight:600;margin-bottom:10px}
+.wrap{position:relative;height:340px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--bd)}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left}
-th{color:var(--mut);font-weight:600}
-tr.cc td{color:var(--gold)}
-.pos{color:#3fb950}.neg{color:#f85149}
-.foot{color:var(--mut);font-size:11px;line-height:1.6;margin-top:18px;border-top:1px solid var(--bd);padding-top:12px}
-.tag{font-size:10px;color:var(--mut)}
-</style></head><body><div class="wrap">
-<h1>Casa Canita — Competitive Set Dashboard</h1>
-<div class="sub">Miami Beach · 24 rooms · refreshed 2026-06-01</div>
-<div class="banner">Run-rate reference (3 mature months, Mar–May 2026, pooled): <b>31.2%</b> occupancy · <b>$249</b> net ADR (excl. taxes &amp; fees)</div>
-<div class="ctrl">
-  <div><label>From week</label><select id="from"></select></div>
-  <div><label>To week</label><select id="to"></select></div>
-  <div class="tag" id="rangelbl"></div>
+th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+tr.casa{background:rgba(232,184,75,.08)}
+tr.casa td{color:var(--gold);font-weight:600}
+.foot{color:var(--mut);font-size:11.5px;margin-top:18px;line-height:1.6}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+</style>
+</head>
+<body>
+<h1><span class="g">Casa Canita</span> — Competitive Set ADR Dashboard</h1>
+<div class="sub">Miami Beach · next 12 Saturdays · ADR only (occupancy intentionally excluded) · generated 2026-06-02</div>
+
+<div class="bar">
+<div><label>From week</label><select id="from"></select></div>
+<div><label>To week</label><select id="to"></select></div>
+<div style="color:var(--mut);font-size:12px">Saturday-night rates · USD · pre-tax</div>
 </div>
+
 <div class="chips" id="chips"></div>
-<div class="cards" id="cards"></div>
-<div class="chart"><h3>ADR by week — Casa Canita vs comp set</h3><canvas id="adrC" height="118"></canvas></div>
-<div class="chart"><h3>Occupancy by week (Casa Canita actual · comp = availability signal)</h3><canvas id="occC" height="118"></canvas></div>
-<div class="chart"><h3>Summary (selected range)</h3><div style="overflow:auto"><table id="tbl"></table></div></div>
-<div class="foot">
-<b>Methodology.</b> Casa Canita = real PMS pick-up report: ADR = net accommodation revenue (excl. taxes &amp; fees) ÷ room nights; occupancy = room nights ÷ (24 rooms × days in month); forward months reflect current on-the-books pace. Comp ADR = Booking.com + Expedia blend (pre-tax nightly, 2 adults, 1 room), sampled 3 Saturdays (next, ~wk6, ~wk12) and linearly interpolated between (dashed = modeled). Comp occupancy is an availability signal only (offer returned ≈ available; no offer = sold out) — NOT booked occupancy. Comp data covers ~12 weeks forward.
-</div>
-</div>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="card"><h2>ADR per night by week (USD)</h2><div class="wrap"><canvas id="c1"></canvas></div></div>
+<div class="card"><h2>Casa Canita vs comp-set ADR gap by week</h2><div class="wrap"><canvas id="c2"></canvas></div></div>
+<div class="card"><h2>Per-hotel summary over selected range</h2><div style="overflow-x:auto"><table id="tbl"></table></div></div>
+
+<div class="foot" id="foot"></div>
+
 <script>
-const D={"weeks":["2026-06-06","2026-06-13","2026-06-20","2026-06-27","2026-07-04","2026-07-11","2026-07-18","2026-07-25","2026-08-01","2026-08-08","2026-08-15","2026-08-22","2026-08-29","2026-09-05","2026-09-12","2026-09-19","2026-09-26","2026-10-03","2026-10-10","2026-10-17","2026-10-24","2026-10-31","2026-11-07","2026-11-14","2026-11-21","2026-11-28","2026-12-05","2026-12-12","2026-12-19","2026-12-26","2027-01-02","2027-01-09","2027-01-16","2027-01-23","2027-01-30","2027-02-06","2027-02-13","2027-02-20","2027-02-27","2027-03-06","2027-03-13","2027-03-20","2027-03-27","2027-04-03","2027-04-10","2027-04-17","2027-04-24","2027-05-01","2027-05-08","2027-05-15","2027-05-22","2027-05-29"],"runrate":{"occ":31.2,"adr":248.89},"cc":{"adr":[258.87,258.87,258.87,258.87,334.78,334.78,334.78,334.78,224.75,224.75,224.75,224.75,224.75,208.93,208.93,208.93,208.93,315.6,315.6,315.6,315.6,315.6,312.69,312.69,312.69,312.69,191.71,191.71,191.71,191.71,null,null,null,null,null,null,null,null,null,null,null,null,null,242.82,242.82,242.82,242.82,200.7,200.7,200.7,200.7,200.7],"occ":[12.5,12.5,12.5,12.5,3.76,3.76,3.76,3.76,1.48,1.48,1.48,1.48,1.48,0.97,0.97,0.97,0.97,0.4,0.4,0.4,0.4,0.4,2.22,2.22,2.22,2.22,1.34,1.34,1.34,1.34,null,null,null,null,null,null,null,null,null,null,null,null,null,0.69,0.69,0.69,0.69,0.54,0.54,0.54,0.54,0.54],"af":["A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","","","","","","","","","","","","","","A","A","A","A","A","A","A","A","A"],"of":["A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","","","","","","","","","","","","","","A","A","A","A","A","A","A","A","A"]},"comp":[{"n":"Esme","adr":[163.1,209.1,255.1,301.1,347.2,393.2,439.2,405.9,372.5,339.2,305.9,272.5,239.2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[60,60,60,60,60,60,60,60,60,60,60,60,60,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":["B","M","M","M","M","M","K","M","M","M","M","M","K","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"of":["A","M","M","M","M","M","A","M","M","M","M","M","A","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]},{"n":"Donatella","adr":[339,340.7,342.3,344,345.7,347.3,349,350.7,352.3,354,355.7,357.3,359,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[60,67,73,80,86,93,99,93,86,80,73,67,60,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":["K","M","M","M","M","M","M","M","M","M","M","M","K","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"of":["A","M","M","M","M","M","S","M","M","M","M","M","A","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]},{"n":"The Betsy","adr":[443,490.5,538,585.5,633,680.5,728,671.2,614.3,557.5,500.7,443.8,387,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[60,60,60,60,60,60,60,60,60,60,60,60,60,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":["K","M","M","M","M","M","B","M","M","M","M","M","K","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"of":["A","M","M","M","M","M","A","M","M","M","M","M","A","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]},{"n":"Essex House","adr":[205,207.5,210,212.5,215,217.5,220,222.5,225,227.5,230,232.5,235,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[60,67,73,80,86,93,99,93,86,80,73,67,60,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":["K","M","M","M","M","M","M","M","M","M","M","M","K","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"of":["A","M","M","M","M","M","S","M","M","M","M","M","A","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]},{"n":"Casa Faena","adr":[222.7,236.8,250.9,265,279.1,293.2,307.3,294.6,281.9,269.2,256.5,243.7,231,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[60,60,60,60,60,60,60,60,60,60,60,60,60,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":["K","M","M","M","M","M","K","M","M","M","M","M","K","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"of":["A","M","M","M","M","M","A","M","M","M","M","M","A","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]},{"n":"Hotel Victor","adr":[321,315.6,310.3,304.9,299.5,294.1,288.8,283.4,278,272.6,267.3,261.9,256.5,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[60,67,73,80,86,93,99,93,86,80,73,67,60,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":["K","M","M","M","M","M","M","M","M","M","M","M","B","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"of":["A","M","M","M","M","M","S","M","M","M","M","M","A","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]},{"n":"The Local House","adr":[429,433.5,438,442.5,447,451.5,456,426.2,396.3,366.5,336.7,306.8,277,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"occ":[60,60,60,60,60,60,60,60,60,60,60,60,60,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"af":["K","M","M","M","M","M","K","M","M","M","M","M","K","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"of":["A","M","M","M","M","M","A","M","M","M","M","M","A","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]}]};
-const COL=['#58a6ff','#f0883e','#bc8cff','#3fb950','#ff7b72','#39c5cf','#db61a2'];
-const wk=D.weeks, N=wk.length;
-let active=D.comp.map(()=>true);
-const fromS=document.getElementById('from'),toS=document.getElementById('to');
-wk.forEach((w,i)=>{const o=document.createElement('option');o.value=i;o.textContent='W'+(i+1)+' · '+w;fromS.appendChild(o);const o2=o.cloneNode(true);toS.appendChild(o2);});
-fromS.value=0; toS.value=11;
-const chips=document.getElementById('chips');
-D.comp.forEach((h,i)=>{const c=document.createElement('span');c.className='chip on';c.textContent=h.n;c.style.borderColor=COL[i];c.dataset.i=i;c.onclick=()=>{active[i]=!active[i];c.classList.toggle('on');render();};c.style.background='on'?COL[i]:'';chips.appendChild(c);});
-function setChipColors(){[...chips.children].forEach((c,i)=>{c.style.background=active[i]?COL[i]:'var(--card)';c.style.color=active[i]?'#0e1117':'var(--mut)';});}
-function avg(a){const v=a.filter(x=>x!=null);return v.length?v.reduce((s,x)=>s+x,0)/v.length:null;}
-let adrChart,occChart;
+const D={
+weeks:["2026-06-06","2026-06-13","2026-06-20","2026-06-27","2026-07-04","2026-07-11","2026-07-18","2026-07-25","2026-08-01","2026-08-08","2026-08-15","2026-08-22"],
+runrate:248.89,
+casa:[149.07,130.86,176.40,193.50,null,null,null,null,null,null,null,null],
+casaNet:[447.20,523.44,176.40,193.50,0,0,0,0,0,0,0,0],
+casaRN:[3,4,1,1,0,0,0,0,0,0,0,0],
+hotels:[
+{n:"Esme",c:"#4cc9f0",adr:[163.05,181.05,243.10,243.10,343.20,439.20,439.20,239.20,223.20,223.20,223.20,239.20]},
+{n:"Donatella",c:"#b794f6",adr:[269.00,399.00,null,null,379.00,null,null,379.00,359.00,359.00,359.00,359.00]},
+{n:"The Betsy",c:"#f78da7",adr:[445.00,488.00,468.00,null,497.00,1014.00,757.00,445.00,410.00,417.00,411.00,393.00]},
+{n:"Essex House",c:"#74c69d",adr:[205.00,215.00,197.00,287.00,null,null,null,265.00,245.00,235.00,235.00,235.00]},
+{n:"Casa Faena",c:"#f4a261",adr:[222.72,212.94,232.78,342.25,249.55,295.90,307.34,null,231.01,249.55,249.55,231.01]},
+{n:"Hotel Victor",c:"#9d8df1",adr:[321.00,434.00,503.00,null,434.00,null,null,349.00,274.00,321.00,274.00,334.00]},
+{n:"The Local House",c:"#e76f51",adr:[429.00,292.00,430.00,401.00,458.00,659.00,456.00,379.00,364.00,429.00,305.00,297.00]}
+]
+};
+const GOLD="#e8b84b";
+const compavg=D.weeks.map((_,w)=>{const v=D.hotels.map(h=>h.adr[w]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;});
+const shortW=d=>{const m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];const p=d.split("-");return m[+p[1]-1]+" "+(+p[2]);};
+
+let fromW=0,toW=11;
+const vis={};D.hotels.forEach(h=>vis[h.n]=true);vis["Casa Canita"]=true;vis["Comp set avg"]=true;
+
+const fS=document.getElementById("from"),tS=document.getElementById("to");
+D.weeks.forEach((w,i)=>{fS.add(new Option(shortW(w),i));tS.add(new Option(shortW(w),i));});
+fS.value=0;tS.value=11;
+fS.onchange=()=>{fromW=+fS.value;if(toW<fromW){toW=fromW;tS.value=toW;}render();};
+tS.onchange=()=>{toW=+tS.value;if(fromW>toW){fromW=toW;fS.value=fromW;}render();};
+
+const chipBox=document.getElementById("chips");
+function mkChip(name,color,bold){const c=document.createElement("div");c.className="chip on";c.style.borderColor=color;c.style.background=color;c.style.color="#0d1117";c.style.fontWeight=bold?"700":"600";c.innerHTML='<span class="dot" style="background:#0d1117"></span>'+name;
+c.onclick=()=>{vis[name]=!vis[name];if(vis[name]){c.classList.add("on");c.style.background=color;c.style.color="#0d1117";}else{c.classList.remove("on");c.style.background="var(--panel2)";c.style.color="var(--mut)";}render();};
+chipBox.appendChild(c);}
+mkChip("Casa Canita",GOLD,true);
+mkChip("Comp set avg","#ffffff",true);
+D.hotels.forEach(h=>mkChip(h.n,h.c,false));
+
+let chart1,chart2;
+const money=x=>x==null?"—":"$"+x.toFixed(0);
+function avgRange(arr){const v=[];for(let w=fromW;w<=toW;w++)if(arr[w]!=null)v.push(arr[w]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;}
+
 function render(){
-  setChipColors();
-  let f=+fromS.value,t=+toS.value; if(f>t){[f,t]=[t,f];}
-  const idx=[];for(let i=f;i<=t;i++)idx.push(i);
-  document.getElementById('rangelbl').textContent=wk[f]+' → '+wk[t]+'  ('+idx.length+' wks)';
-  const ccA=avg(idx.map(i=>D.cc.adr[i]));
-  const ccO=avg(idx.map(i=>D.cc.occ[i]));
-  let cv=[];idx.forEach(i=>D.comp.forEach((h,hi)=>{if(active[hi]&&h.adr[i]!=null)cv.push(h.adr[i]);}));
-  const compA=cv.length?cv.reduce((s,x)=>s+x,0)/cv.length:null;
-  const hAvg=D.comp.map((h,hi)=>active[hi]?avg(idx.map(i=>h.adr[i])):null);
-  const pool=hAvg.filter(x=>x!=null).slice();
-  let rank='—',tot='—';
-  if(ccA!=null){const all=pool.concat([ccA]).sort((a,b)=>b-a);rank=all.indexOf(ccA)+1;tot=all.length;}
-  const diff=(ccA!=null&&compA!=null)?ccA-compA:null;
-  const cards=[
-    {l:'Casa Canita ADR',v:ccA!=null?'$'+ccA.toFixed(0):'—',d:'selected range',g:1},
-    {l:'Casa Canita Occupancy',v:ccO!=null?ccO.toFixed(1)+'%':'—',d:'selected range',g:1},
-    {l:'Comp set Avg ADR',v:compA!=null?'$'+compA.toFixed(0):'—',d:cv.length+' obs'},
-    {l:'ADR vs Comp set',v:diff!=null?(diff>=0?'+$':'-$')+Math.abs(diff).toFixed(0):'—',d:ccA!=null?('rank '+rank+'/'+tot):'—',cls:diff!=null?(diff>=0?'pos':'neg'):''},
-    {l:'Run-rate ADR (ref)',v:'$'+D.runrate.adr.toFixed(0),d:D.runrate.occ+'% occ · Mar–May'}
-  ];
-  document.getElementById('cards').innerHTML=cards.map(c=>'<div class="kpi'+(c.g?' gold':'')+'"><div class="l">'+c.l+'</div><div class="v '+(c.cls||'')+'">'+c.v+'</div><div class="d">'+c.d+'</div></div>').join('');
-  const labels=idx.map(i=>'W'+(i+1));
-  const ds=[{label:'Casa Canita',data:idx.map(i=>D.cc.adr[i]),borderColor:'#d4af37',backgroundColor:'#d4af37',borderWidth:3,spanGaps:true,tension:.25,pointRadius:2}];
-  D.comp.forEach((h,hi)=>{if(!active[hi])return;const seg=idx.map(i=>h.adr[i]);const dashed=idx.some(i=>h.af[i]==='M');
-    ds.push({label:h.n,data:seg,borderColor:COL[hi],backgroundColor:COL[hi],borderWidth:1.6,borderDash:dashed?[5,4]:[],spanGaps:true,tension:.25,pointRadius:1.5});});
-  const oc=[{label:'Casa Canita',data:idx.map(i=>D.cc.occ[i]),borderColor:'#d4af37',backgroundColor:'#d4af37',borderWidth:3,spanGaps:true,tension:.25,pointRadius:2}];
-  D.comp.forEach((h,hi)=>{if(!active[hi])return;const seg=idx.map(i=>h.occ[i]);const dashed=idx.some(i=>h.of[i]==='M');
-    oc.push({label:h.n,data:seg,borderColor:COL[hi],backgroundColor:COL[hi],borderWidth:1.4,borderDash:dashed?[5,4]:[],spanGaps:true,tension:.25,pointRadius:1.2});});
-  const opt=t=>({responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#8b949e',boxWidth:12,font:{size:10}}}},scales:{x:{ticks:{color:'#8b949e',maxRotation:0,autoSkip:true},grid:{color:'#222'}},y:{ticks:{color:'#8b949e',callback:v=>t==='$'?'$'+v:v+'%'},grid:{color:'#222'}}}});
-  if(adrChart)adrChart.destroy(); if(occChart)occChart.destroy();
-  adrChart=new Chart(document.getElementById('adrC'),{type:'line',data:{labels,datasets:ds},options:opt('$')});
-  occChart=new Chart(document.getElementById('occC'),{type:'line',data:{labels,datasets:oc},options:opt('%')});
-  let rows='<tr><th>Hotel</th><th>Avg ADR</th><th>Min</th><th>Max</th><th>Occ signal</th></tr>';
-  rows+='<tr class="cc"><td>Casa Canita</td><td>'+(ccA!=null?'$'+ccA.toFixed(0):'—')+'</td><td>'+fmtMin(idx.map(i=>D.cc.adr[i]))+'</td><td>'+fmtMax(idx.map(i=>D.cc.adr[i]))+'</td><td>'+(ccO!=null?ccO.toFixed(1)+'%':'—')+'</td></tr>';
-  D.comp.forEach((h,hi)=>{if(!active[hi])return;const a=avg(idx.map(i=>h.adr[i]));const so=idx.some(i=>h.of[i]==='S');
-    rows+='<tr><td>'+h.n+'</td><td>'+(a!=null?'$'+a.toFixed(0):'—')+'</td><td>'+fmtMin(idx.map(i=>h.adr[i]))+'</td><td>'+fmtMax(idx.map(i=>h.adr[i]))+'</td><td>'+(so?'sold-out wks':'available')+'</td></tr>';});
-  document.getElementById('tbl').innerHTML=rows;
+ const labels=[];for(let w=fromW;w<=toW;w++)labels.push(shortW(D.weeks[w]));
+ let net=0,rn=0;for(let w=fromW;w<=toW;w++){net+=D.casaNet[w];rn+=D.casaRN[w];}
+ const casaAvg=rn>0?net/rn:null;
+ const compAvgR=avgRange(compavg);
+ const gapV=(casaAvg!=null&&compAvgR!=null)?casaAvg-compAvgR:null;
+ const gapPct=(gapV!=null&&compAvgR)?gapV/compAvgR*100:null;
+ const ranks=D.hotels.map(h=>({n:h.n,v:avgRange(h.adr)})).filter(x=>x.v!=null);
+ if(casaAvg!=null)ranks.push({n:"Casa Canita",v:casaAvg});
+ ranks.sort((a,b)=>b.v-a.v);
+ const rk=casaAvg!=null?ranks.findIndex(x=>x.n==="Casa Canita")+1:null;
+ const k=document.getElementById("kpis");
+ k.innerHTML=
+ `<div class="kpi gold"><div class="l">Casa Canita avg ADR</div><div class="v">${casaAvg==null?"—":"$"+casaAvg.toFixed(0)}</div><div class="s">realized, on-the-books</div></div>
+  <div class="kpi"><div class="l">Comp set avg ADR</div><div class="v">${money(compAvgR)}</div><div class="s">${ranks.filter(r=>r.n!=="Casa Canita").length} hotels priced</div></div>
+  <div class="kpi"><div class="l">Gap vs comp set</div><div class="v ${gapV==null?'':gapV>=0?'pos':'neg'}">${gapV==null?"—":(gapV>=0?"+":"")+"$"+gapV.toFixed(0)}</div><div class="s">${gapPct==null?"":(gapPct>=0?"+":"")+gapPct.toFixed(1)+"% vs market"}</div></div>
+  <div class="kpi"><div class="l">Casa Canita rank</div><div class="v">${rk==null?"—":rk+" / "+ranks.length}</div><div class="s">by ADR in range</div></div>
+  <div class="kpi"><div class="l">Run-rate ADR</div><div class="v">$${D.runrate.toFixed(0)}</div><div class="s">Mar–May '26 ref.</div></div>`;
+ const ds=[];
+ if(vis["Casa Canita"])ds.push({label:"Casa Canita",data:D.casa.slice(fromW,toW+1),borderColor:GOLD,backgroundColor:GOLD,borderWidth:4,spanGaps:true,pointRadius:5,pointHoverRadius:7,tension:.25,order:0});
+ if(vis["Comp set avg"])ds.push({label:"Comp set avg",data:compavg.slice(fromW,toW+1),borderColor:"#ffffff",backgroundColor:"#fff",borderWidth:3,borderDash:[7,4],spanGaps:true,pointRadius:0,tension:.25,order:1});
+ D.hotels.forEach(h=>{if(vis[h.n])ds.push({label:h.n,data:h.adr.slice(fromW,toW+1),borderColor:h.c,backgroundColor:h.c,borderWidth:1.4,spanGaps:true,pointRadius:2,tension:.25,order:5});});
+ if(chart1)chart1.destroy();
+ chart1=new Chart(document.getElementById("c1"),{type:"line",data:{labels,datasets:ds},options:{maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": "+(c.parsed.y==null?"no rate":"$"+c.parsed.y.toFixed(0))}}},scales:{x:{ticks:{color:"#8b949e"},grid:{color:"#21262d"}},y:{ticks:{color:"#8b949e",callback:v=>"$"+v},grid:{color:"#21262d"}}}}});
+ const gaps=[];for(let w=fromW;w<=toW;w++)gaps.push((D.casa[w]!=null&&compavg[w]!=null)?+(D.casa[w]-compavg[w]).toFixed(2):null);
+ if(chart2)chart2.destroy();
+ chart2=new Chart(document.getElementById("c2"),{type:"bar",data:{labels,datasets:[{label:"ADR gap",data:gaps,backgroundColor:gaps.map(g=>g==null?"#30363d":g>=0?"#2ea043":"#da3633")}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y==null?"no Casa data":(c.parsed.y>=0?"+":"")+"$"+c.parsed.y.toFixed(0)+" vs market"}}},scales:{x:{ticks:{color:"#8b949e"},grid:{color:"#21262d"}},y:{ticks:{color:"#8b949e",callback:v=>"$"+v},grid:{color:"#21262d"}}}}});
+ const rows=[];
+ const casaW=[];for(let w=fromW;w<=toW;w++)if(D.casa[w]!=null)casaW.push(D.casa[w]);
+ rows.push({n:"Casa Canita",avg:casaAvg,min:casaW.length?Math.min(...casaW):null,max:casaW.length?Math.max(...casaW):null,casa:true});
+ D.hotels.forEach(h=>{const v=[];for(let w=fromW;w<=toW;w++)if(h.adr[w]!=null)v.push(h.adr[w]);rows.push({n:h.n,avg:avgRange(h.adr),min:v.length?Math.min(...v):null,max:v.length?Math.max(...v):null});});
+ let html="<tr><th>Hotel</th><th>Avg ADR</th><th>Min</th><th>Max</th><th>&Delta; vs Casa Canita</th></tr>";
+ rows.forEach(r=>{const d=(r.avg!=null&&casaAvg!=null&&!r.casa)?r.avg-casaAvg:null;
+ html+=`<tr class="${r.casa?'casa':''}"><td>${r.n}</td><td>${money(r.avg)}</td><td>${money(r.min)}</td><td>${money(r.max)}</td><td>${r.casa?'—':(d==null?'—':'<span class="'+(d>=0?'pos':'neg')+'">'+(d>=0?'+':'')+'$'+d.toFixed(0)+'</span>')}</td></tr>`;});
+ document.getElementById("tbl").innerHTML=html;
 }
-function fmtMin(a){const v=a.filter(x=>x!=null);return v.length?'$'+Math.min(...v).toFixed(0):'—';}
-function fmtMax(a){const v=a.filter(x=>x!=null);return v.length?'$'+Math.max(...v).toFixed(0):'—';}
-fromS.onchange=render; toS.onchange=render;
+document.getElementById("foot").innerHTML=
+"<b>Methodology.</b> Casa Canita ADR = net accommodation revenue (excl. taxes &amp; fees) &divide; room nights, bucketed by check-in week, from the latest PMS pick-up report — realized on-the-books, sparse for far weeks (gaps left blank). "+
+"Comp-set ADR = Booking.com + Expedia blend, pre-tax nightly rate for the representative Saturday; each hotel's weekly ADR is the mean of the channels that returned a rate, and the comp-set average is the mean across comps priced that week. Booking.com 'not found' weeks are left as gaps (never treated as $0). Expedia matching contributed where the comp appeared in Miami Beach search results (chiefly weeks Jun 6–27); Booking.com is the consistent per-hotel channel across all 12 weeks. "+
+"Run-rate ADR is the pooled net ADR over the three most recent mature months (Mar–May 2026), shown for reference only. <b>Occupancy is intentionally not shown</b> — it is not reliably knowable for competitors. Every plotted point is a real observation; no interpolation or modeling.";
 render();
-</script></body></html>
+</script>
+</body>
+</html>
